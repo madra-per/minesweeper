@@ -1,3 +1,4 @@
-/target
-/dist
-Cargo.lock
+/frontend/target
+/frontend/dist
+/frontend/Cargo.lock
+/src-tauri/Cargo.lock
