@@ -1,7 +1,7 @@
 use cell::{Cellule, State};
 use rand::Rng;
 use yew::html::Scope;
-use yew::{classes, html, Component, Context, Html};
+use yew::{classes, html, Component, Context, Html, MouseEvent};
 
 mod cell;
 
@@ -10,6 +10,7 @@ pub enum Msg {
     Reset,
     ToggleCellule(usize),
     ToggleMark(usize),
+    Stop,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -113,8 +114,13 @@ impl App {
         };
         html! {
             <div key={idx} class={classes!("game-cellule", cellule_status)}
-                onclick={link.callback(move |_| Msg::ToggleCellule(idx))}
-                onwheel={link.callback(move |_| Msg::ToggleMark(idx))}>
+                oncontextmenu={link.callback(move |e: MouseEvent| {
+                    e.prevent_default();
+                    Msg::ToggleMark(idx)
+                })}
+                onclick={link.callback(move |_| {
+                    Msg::ToggleCellule(idx)
+                })}>
                 { if cellule.is_revealed() && !cellule.is_zero() { cellule.val.to_string() } else { String::from("") } }
             </div>
         }
@@ -176,6 +182,9 @@ impl Component for App {
                     cellule.toggle_marked();
                 }
                 true
+            }
+            Msg::Stop => {
+                false
             }
         }
     }
