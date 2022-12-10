@@ -2,3 +2,4 @@
 /frontend/dist
 /frontend/Cargo.lock
 /src-tauri/Cargo.lock
+*~
