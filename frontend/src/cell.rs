@@ -64,6 +64,22 @@ impl Cellule {
         self.val == 0
     }
 
+    pub fn get_visual(self) -> String {
+        if self.is_marked(){
+            return String::from("⚡")
+        }
+        if !self.is_revealed(){
+            return String::from("")
+        }
+        if self.is_zero(){
+            return String::from("")
+        }
+        if self.is_mine(){
+            return String::from("❌")
+        }
+        return self.val.to_string()
+    }
+
     pub fn toggle_marked(&mut self) {
         if self.is_marked(){
             self.set_hidden();

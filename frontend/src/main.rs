@@ -31,13 +31,15 @@ impl App {
         for row in 1..self.cellules_height - 1 {
             for col in 1..self.cellules_width - 1 {
                 let current_idx = self.row_col_as_idx(row as isize, col as isize);
-                if rand::thread_rng().gen::<u8>() < 25 {
+                if rand::thread_rng().gen::<u8>() < 55 {
                     self.cellules[current_idx].set_mine();
                 }
             }
         }
         self.cellules[idx].reset();
-        for cl in self.ref_neighbors((idx / self.cellules_width).try_into().unwrap(), (idx % self.cellules_width).try_into().unwrap()) {
+        for cl in self.ref_neighbors(
+                (idx / self.cellules_width).try_into().unwrap(), 
+                (idx % self.cellules_width).try_into().unwrap()) {
             self.cellules[cl].reset();
         }
         for row in 1..self.cellules_height - 1 {
@@ -60,7 +62,9 @@ impl App {
     }
 
     fn expand_zero(&mut self, idx: usize){
-        for cl in self.ref_neighbors((idx / self.cellules_width).try_into().unwrap(), (idx % self.cellules_width).try_into().unwrap()) {
+        for cl in self.ref_neighbors(   
+                (idx / self.cellules_width).try_into().unwrap(),
+                (idx % self.cellules_width).try_into().unwrap()) {
             if self.cellules[cl].is_hidden() {
                 self.cellules[cl].toggle();
                 if self.cellules[cl].is_zero() {
@@ -121,7 +125,7 @@ impl App {
                 onclick={link.callback(move |_| {
                     Msg::ToggleCellule(idx)
                 })}>
-                { if cellule.is_revealed() && !cellule.is_zero() { cellule.val.to_string() } else { String::from("") } }
+                { cellule.get_visual() }
             </div>
         }
     }
@@ -132,7 +136,7 @@ impl Component for App {
     type Properties = ();
 
     fn create(_ctx: &Context<Self>) -> Self {
-        let (cellules_width, cellules_height) = (53, 40);
+        let (cellules_width, cellules_height) = (32, 18);
         let mut app = Self {
             state: GameState::New,
             cellules: vec![Cellule::new_empty(); cellules_width * cellules_height],
@@ -160,6 +164,9 @@ impl Component for App {
             Msg::ToggleCellule(idx) => {
                 if self.state == GameState::InProgress {
                     let cellule = self.cellules.get_mut(idx).unwrap();
+                    if cellule.is_marked(){
+                        return false
+                    }
                     cellule.toggle();
                     if cellule.is_mine() {
                         self.state = GameState::Over;
@@ -212,24 +219,17 @@ impl Component for App {
             <div>
                 <section class="game-container">
                     <header class="app-header">
-                        <h1 class="app-title">{ "Minesweeper" }</h1>
+                        <div class="game-buttons">
+                            <button class="game-button" onclick={ctx.link().callback(|_| Msg::Start)}>{ "Start" }</button>
+                            <button class="game-button" onclick={ctx.link().callback(|_| Msg::Reset)}>{ "Reset" }</button>
+                        </div>
                     </header>
                     <section class="game-area">
                         <div class="game">
                             { for cell_rows }
                         </div>
-                        <div class="game-buttons">
-                            <button class="game-button" onclick={ctx.link().callback(|_| Msg::Start)}>{ "Start" }</button>
-                            <button class="game-button" onclick={ctx.link().callback(|_| Msg::Reset)}>{ "Reset" }</button>
-                        </div>
                     </section>
                 </section>
-                <footer class="app-footer">
-                    <strong class="footer-text">
-                      { "Minesweeper - a yew experiment " }
-                    </strong>
-                    <a href="https://github.com/yewstack/yew" target="_blank">{ "source" }</a>
-                </footer>
             </div>
         }
     }
