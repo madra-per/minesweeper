@@ -3,7 +3,8 @@
     "beforeBuildCommand": "cd frontend && trunk build",
     "beforeDevCommand": "cd frontend && trunk serve",
     "devPath": "http://127.0.0.1:8080",
-    "distDir": "../frontend/dist"
+    "distDir": "../frontend/dist",
+    "withGlobalTauri": true
   },
   "package": {
     "productName": "Minesweeper",
@@ -11,7 +12,10 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": false,
+      "window": {
+        "setSize": true
+      }
     },
     "bundle": {
       "active": true,
@@ -55,10 +59,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 444,
-        "resizable": false,
+        "height": 340,
+        "resizable": true,
         "title": "Minesweeper",
-        "width": 710
+        "width": 420
       }
     ]
   }
